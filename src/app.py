@@ -2,6 +2,7 @@
 
 from fastapi import FastAPI
 from dotenv import load_dotenv
+
 from api.models.db import Base, engine
 from api.routers.views import router as ScrapeRouter
 app = FastAPI()
