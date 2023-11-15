@@ -9,6 +9,7 @@ dumps.py
 .env
 scrapped.csv
 
+__pycache__
 agent/__pycache__
 agent/*/__pycache__
 agent/*/*/__pycache__
