@@ -82,7 +82,7 @@ sqlparse==0.4.4
 starlette==0.27.0
 tldextract==5.0.1
 tqdm==4.66.1
-Twisted==22.10.0
+Twisted==23.10.0
 typing_extensions==4.8.0
 tzdata==2023.3
 ujson==5.8.0
