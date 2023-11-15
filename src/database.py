@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 
-from src.db
+
 from src.app_config import (
     DB_USER,
     DB_PASS,
@@ -14,7 +14,7 @@ from src.app_config import (
 )
 
 
-SQLALCHEMY_DATABASE_URL = f"postgresql://{user}:{passwd}@localhost:5432/{db_name}"
+SQLALCHEMY_DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@localhost:5432/{DB_NAME}"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

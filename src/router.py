@@ -2,15 +2,20 @@
 import uuid
 from io import BytesIO
 import pandas as pd
-from fastapi import APIRouter, Request, status, Depends, \
-    UploadFile, File, HTTPException
+from fastapi import (
+    APIRouter, 
+    Request, 
+    status, 
+    Depends, 
+    UploadFile, File, HTTPException)
+    
 from fastapi.responses import JSONResponse
 from starlette.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from api.models.schema import TranslationRequest
-from api.models.sc_model import CompanyModel
-from api.models.database import connect_db
-from agent.tasks import crawler_task
+from src.request_schemas import TranslationRequest
+from src.models import CompanyModel
+from src.database import connect_db
+from src.agent.tasks import crawler_task
 
 
 router = APIRouter()

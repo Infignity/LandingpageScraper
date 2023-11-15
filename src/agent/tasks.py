@@ -1,5 +1,4 @@
-"""crawler libs import"""
-from agent import celery_app
+from src.agent import celery_app
 from billiard import Process
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
