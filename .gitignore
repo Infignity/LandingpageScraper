@@ -160,7 +160,3 @@ cython_debug/
 .idea/
 .vscode/
 datasets/
-test_scripts/
-ignored/
-script.py
-test_update.json

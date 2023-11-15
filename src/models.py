@@ -1,6 +1,5 @@
-'''import dependencies'''
 from sqlalchemy import Column, Integer, String
-from .db import Base
+from src.database import Base
 
 
 class CompanyModel(Base):

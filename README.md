@@ -2,14 +2,12 @@
 
 ```
 # run app
-uvicorn main:app –reload
+uvicorn src.app:app –reload
 ```
 
 # run celery
 ```
 python3 -m celery -A agent worker --loglevel=info
-
-python3 -m celery -A agent  worker --loglevel=info
 
 ```
 
