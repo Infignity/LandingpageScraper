@@ -1,0 +1,18 @@
+deven
+env
+venv
+web_spiders copy.py
+WebSpider
+input.csv
+output.csv
+dumps.py
+.env
+scrapped.csv
+
+agent/__pycache__
+agent/*/__pycache__
+agent/*/*/__pycache__
+
+api/__pycache__
+api/*/__pycache__
+agent/*/*/__pycache__
