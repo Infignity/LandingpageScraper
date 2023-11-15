@@ -2,7 +2,8 @@ from src.agent import celery_app
 from billiard import Process
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-
+from typing import List
+from celery.result import AsyncResult
 
 class CrawlerTrigger:
     """crawler trigger"""
@@ -38,7 +39,7 @@ crawler = CrawlerTrigger()
 @celery_app.task(name="run_crawler")
 def crawler_task(
     uuid: str,
-    urls: [str]
+    urls: List[str]
 ):
     '''crawler task caller'''
     crawler.crawl_trigs(urls, uuid)

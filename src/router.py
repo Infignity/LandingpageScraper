@@ -8,7 +8,7 @@ from fastapi import (
     status, 
     Depends, 
     UploadFile, File, HTTPException)
-    
+import os  
 from fastapi.responses import JSONResponse
 from starlette.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -16,34 +16,20 @@ from src.request_schemas import TranslationRequest
 from src.models import CompanyModel
 from src.database import connect_db
 from src.agent.tasks import crawler_task
-
+from src.app_config import BASE_DIR
+from src import read_csv_file
 
 router = APIRouter()
-jin_template = Jinja2Templates(directory="api/templates")
+jin_template = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
-
-# helpers function
-def read_csv_file(file_name, column_index='organization_website'):
-    """Read the CSV file and extract a specific column."""
-    df = pd.read_csv(file_name)
-    # Extract the specified column
-    urls = df[column_index].tolist()
-    return urls
-
-# @router.get("/", name="home")
-# def query_home(
-#     request: Request,
-# ):
-#     """entry page"""
-#     context = {"request": request, "data": "test"}
-#     return jin_template.TemplateResponse("index.html", context)
 
 @router.get("/")
-def query_home(
+def index(
     request: Request,
     db: Session = Depends(connect_db)
 ):
-    '''get all AI queries'''
+    """ Get form page and results """
+    
     companies_data = db.query(CompanyModel).all()
     result_list = []
     # Loop through the data and create dictionaries
@@ -65,13 +51,14 @@ async def root():
     return {"message": "ping pong"}
 
 
-@router.post('/scrape',)
-def scrape_url(
+@router.post('/scrape')
+def register_task(
     file: UploadFile = File(...)
 ):
-    '''web scrapper'''
+    """ Register new scraping task """
+    
     content = {}
-
+    urls = []
     try:
         csv_bytes = file.file.read()
         buffer = BytesIO(csv_bytes)
@@ -83,20 +70,14 @@ def scrape_url(
         buffer.close()
         file.file.close()
 
-    formatted_urls = set()
-    for url in urls:
-        # if 'http' not in url:
-        #     url = 'https://' + url
-        formatted_urls.add(url)
 
-    start_urls = list(formatted_urls)
     # a random uuid to track celery task
     random_uuid = str(uuid.uuid4())
     
     # call task multiple time to ensure success
     task_result = crawler_task.delay(
         random_uuid,
-        start_urls,
+        urls,
     )
 
     task_id = task_result.id
@@ -119,7 +100,7 @@ def scrape_url(
 
 @router.get("/scrapped")
 def get_scrapped(request: Request):
-    """get all scrapped data"""
+    """ get all scrapped data """
     content = {}
     return JSONResponse(
         content=content,
