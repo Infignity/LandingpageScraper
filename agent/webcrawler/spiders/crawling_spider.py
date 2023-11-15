@@ -19,7 +19,7 @@ class CrawlingWeb(scrapy.Spider):
 
     def start_requests(self):
         yield scrapy.Request(
-            self.start_urls[0],
+            self.start_urls,
             meta={'playwright': True}
         )
   
@@ -44,7 +44,7 @@ class CrawlingWeb(scrapy.Spider):
         item["url"] = response.url
         item["text"] = extracted_text
         yield item
-
+        print(dt)
         self.data.append(dt)
         for link in link_extractor.extract_links(response):
             yield response.follow(

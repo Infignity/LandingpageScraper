@@ -37,7 +37,7 @@ class WebcrawlerPipeline:
         """process item func"""
         print("inserted into DB")
         self.cur.execute(
-            """ insert into web_scrapper (tag, url, text ) values (%s,%s,%s)""",
+            """ insert into web_scrapper (tag, url, text ) values (%s,%s,%s) """,
             (item["tag"], item["url"], item["text"])
         )
         # Execute insert of data into database
