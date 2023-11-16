@@ -1,17 +1,26 @@
-from sqlalchemy import Column, Integer, String
-from src.database import Base
+from beanie.odm.documents import Document
+from beanie import PydanticObjectId
+from typing import List, Dict, Literal
+from pydantic import Field
+from src.app_config import simple_pydantic_model_config
+from datetime import datetime
 
 
-class CompanyModel(Base):
-    '''company website database'''
-    __tablename__ = "web_scrapper"
-
-    id = Column(Integer, primary_key=True, index=True)
-    url = Column(String)
-    tag = Column(String)
-    text = Column(String)
-
-    def as_dict(self):
-        '''Convert CompanyModel object to a dictionary'''
-        return {column.id: getattr(self, column.id)
-                for column in self.__table__.columns}
+class Task(Document):
+    class Settings:
+        name = "tasks"
+        use_state_management = True
+        
+    model_config = simple_pydantic_model_config
+    
+    id: PydanticObjectId = Field(
+        description="Task Id",
+        default_factory=lambda: PydanticObjectId(),
+        alias="_id"
+    )
+    
+    celery_task_id: str = Field(default="")
+    registered_at: datetime = Field(default_factory=datetime.now)
+    state: Literal["completed", "running", "notstarted"] = Field(default="notstarted")
+    results: List[Dict] = Field(default=[])
+    
