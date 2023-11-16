@@ -1,20 +1,16 @@
 '''lib import'''
 import uuid
 from io import BytesIO
-import pandas as pd
 from fastapi import (
     APIRouter, 
     Request, 
-    status, 
-    Depends, 
+    status,  
+    Response,
     UploadFile, File, HTTPException)
 import os  
 from fastapi.responses import JSONResponse
 from starlette.templating import Jinja2Templates
-from sqlalchemy.orm import Session
-from src.request_schemas import TranslationRequest
-from src.models import CompanyModel
-from src.database import connect_db
+from src.models import Task
 from src.agent.tasks import crawler_task
 from src.app_config import BASE_DIR
 from src import read_csv_file
@@ -24,40 +20,28 @@ jin_template = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 
 @router.get("/")
-def index(
+async def get_tasks(
     request: Request,
-    db: Session = Depends(connect_db)
+    response: Response
 ):
     """ Get form page and results """
     
-    companies_data = db.query(CompanyModel).all()
-    result_list = []
-    # Loop through the data and create dictionaries
-    for item in companies_data:
-        result_dict = {
-            "id": item.id,
-            "url": item.url,
-            "tag": item.tag,
-            "text": item.text,
-        }
-        result_list.append(result_dict)
-    context = {"request": request, "data": result_list}
+    tasks = await Task.find(projection_model={"results":0}).to_list()
+    print("TASKS: ",tasks)
+    context = {"request": request, "data": []}
+    
+    response.status_code = status.HTTP_200_OK
     return jin_template.TemplateResponse("index.html", context)
 
 
-@router.get("/ping")
-async def root():
-    """a test route"""
-    return {"message": "ping pong"}
-
-
 @router.post('/scrape')
-def register_task(
+async def add_task(
+    request: Request, 
+    response: Response,
     file: UploadFile = File(...)
 ):
     """ Register new scraping task """
     
-    content = {}
     urls = []
     try:
         csv_bytes = file.file.read()
@@ -70,40 +54,16 @@ def register_task(
         buffer.close()
         file.file.close()
 
-
-    # a random uuid to track celery task
-    random_uuid = str(uuid.uuid4())
+    new_task = Task()
     
     # call task multiple time to ensure success
     task_result = crawler_task.delay(
-        random_uuid,
+        str(new_task.id),
         urls,
     )
-
-    task_id = task_result.id
-    if task_result.successful():
-        # Get the result of the task
-        data = task_result.result
-        content["data"] = data
-        
-        return JSONResponse(
-            content=content,
-            status_code=status.HTTP_200_OK
-        )
-    else:
-        content["task_id"] = task_id
-        return JSONResponse(
-            content=content,
-            status_code=status.HTTP_200_OK
-        )
-
-
-@router.get("/scrapped")
-def get_scrapped(request: Request):
-    """ get all scrapped data """
-    content = {}
-    return JSONResponse(
-        content=content,
-        status_code=status.HTTP_200_OK
-    )
+    await new_task.create()
+    
+    response.status_code = status.HTTP_200_OK
+    new_task.celery_task_id = task_result.id
+    return new_task.model_dump(exclude=["results"])
 

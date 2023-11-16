@@ -1,31 +1,20 @@
-'''defining database connection'''
-import os
-from typing import Any
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
+""" Includes code to communicate with mongodb database """
 
-
+from typing import List
+import motor.motor_asyncio
+from beanie import init_beanie
 from src.app_config import (
-    DB_USER,
-    DB_PASS,
-    DB_NAME
+    DB_NAME,
+    MONGODB_CONN_STRING,
 )
 
 
-SQLALCHEMY_DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@localhost:5432/{DB_NAME}"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base: Any = declarative_base()
-
-def connect_db():
-    """connect db"""
-    
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-        
+async def init_db(models: List):
+    """
+    Initializes the database connection using async motor driver
+    :param models: A list of models to add
+    """
+    client = motor.motor_asyncio.AsyncIOMotorClient(MONGODB_CONN_STRING)
+    await init_beanie(
+        database=client.get_default_database(DB_NAME), document_models=models
+    )

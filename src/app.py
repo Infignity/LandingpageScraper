@@ -4,9 +4,9 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 
-from src.database import Base, engine
+from src.database import init_db
 from src.router import router as ScrapeRouter
-
+from src.models import Task
 
 app = FastAPI()
 
@@ -21,11 +21,13 @@ app.add_middleware(
 
 app.include_router(ScrapeRouter)
 
+MODELS = [Task]
+
 @app.on_event("startup")
 async def start_db():
     """Initializes the database"""
     
-    Base.metadata.create_all(bind=engine)
+    await init_db(models=MODELS)
     
 
 

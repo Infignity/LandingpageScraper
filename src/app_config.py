@@ -22,9 +22,8 @@ def create_path(path_str: str, allow_absolute=False) -> str:
     return full_path
 
 ENVIRONMENT: Literal["development", "production", "staging"] = config("ENVIRONMENT")
-DB_USER = config("DB_USER")
-DB_PASS = config("DB_PASS")
-DB_NAME = config("DB_NAME")
+MONGODB_CONN_STRING = config("MONGODB_CONN_STRING")
+DB_NAME = config("MONGODB_DB_NAME")
 
 def to_camel_case(snake_str: str):
     """
