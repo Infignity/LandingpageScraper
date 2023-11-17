@@ -1,6 +1,7 @@
 """ Define all configurations """
 
 import os
+import random
 from typing import Literal
 from pydantic import ConfigDict
 from starlette.config import Config
@@ -43,3 +44,9 @@ simple_pydantic_model_config = ConfigDict(
     alias_generator=to_camel_case,
     populate_by_name=True
 )
+
+with open("dags/bridging365/user_agents.json") as ua_file:
+    agents = json.load(ua_file)
+
+def get_random_ua():
+    return random.choice(agents)
