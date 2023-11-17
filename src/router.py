@@ -14,6 +14,7 @@ from src.models import Task
 from src.agent.tasks import crawler_task
 from src.app_config import BASE_DIR
 from src import read_csv_file
+from src.schemas import TaskView
 
 router = APIRouter()
 jin_template = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
@@ -26,7 +27,7 @@ async def get_tasks(
 ):
     """ Get form page and results """
     
-    tasks = await Task.find(projection_model={"results":0}).to_list()
+    tasks = await Task.find().project(TaskView).to_list()
     print("TASKS: ",tasks)
     context = {"request": request, "data": []}
     
@@ -61,9 +62,12 @@ async def add_task(
         str(new_task.id),
         urls,
     )
+    
+    new_task.celery_task_id = task_result.id
     await new_task.create()
     
     response.status_code = status.HTTP_200_OK
-    new_task.celery_task_id = task_result.id
-    return new_task.model_dump(exclude=["results"])
+ 
+    return new_task.model_dump(exclude=["results", "scraped_urls"])
+    
 

@@ -1,5 +1,5 @@
 broker_url = 'redis://localhost:6379/0'
-result_backend = 'redis://localhost:6379/0'
+result_backend = 'redis://localhost:6379/1'
 imports = ("tasks",)
 task_routes = {
     'run_crawler': {
@@ -31,3 +31,5 @@ worker_prefetch_multiplier = 10
 task_serializer = "json"
 result_serializer = "json"
 accept_content = ["json"]
+
+broker_connection_retry_on_startup = True
