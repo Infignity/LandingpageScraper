@@ -82,10 +82,7 @@ async def run(task_id_str, urls, start_n:int = 0):
     print(f"Starting task -> {task_id_str} -> {total_urls} urls")
     
     await init_db([Task, TaskResult])
-    
-    # await Task.delete_all()
-    # await TaskResult.delete_all()
-    
+        
     await update_task_state(task_id, "running")
     
     chunk_size = 150
