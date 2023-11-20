@@ -2,6 +2,7 @@
 
 import os
 import random
+import json
 from typing import Literal
 from pydantic import ConfigDict
 from starlette.config import Config
@@ -45,7 +46,7 @@ simple_pydantic_model_config = ConfigDict(
     populate_by_name=True
 )
 
-with open("dags/bridging365/user_agents.json") as ua_file:
+with open(os.path.join(BASE_DIR, "user_agents.json")) as ua_file:
     agents = json.load(ua_file)
 
 def get_random_ua():
