@@ -8,29 +8,15 @@ from src.models import Task, TaskResult
 from src.app_config import get_random_ua
 from src.utils import strip_text
 from beanie import PydanticObjectId
-# from beanie.operators.
-
-
-class MaxretriesError(Exception):
-    pass
-
-class EmptyParserError(Exception):
-    pass
-
-class InvalidUrlError(Exception):
-    pass
+from src.exceptions import MaxretriesError, EmptyParserError, InvalidUrlError
 
 MAX_RETRIES = 3
 
-async def add_scraped_url(task: Task, url):
-    task.scraped_urls.append(url)
-    await task.save_changes()
 
 async def send_until_ok(session: httpx.AsyncClient,url, random_ua=get_random_ua(), retries=0) -> HTMLParser:
     if not isinstance(url, str):
         print(f"URL TYPE {type(str)}")
         raise InvalidUrlError(f"Invalid Url")
-     
     
     try:
         resp = await session.get(url, headers={"user-agent": random_ua}, follow_redirects=True)
@@ -80,7 +66,6 @@ async def scrape_url(session: httpx.AsyncClient, url: str, task_id: PydanticObje
             await new_task_result.create()
             
         except (InvalidUrlError, MaxretriesError):
-            # await add_scraped_url(task, url)
             pass
         
 
