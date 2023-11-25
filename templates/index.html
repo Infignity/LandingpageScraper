@@ -78,14 +78,11 @@
             }
         }
 
-    // Attach the handleDownload function to the button click event
-    document.getElementById('downloadBtn').addEventListener('click', handleDownload);
-
-
 
     document.addEventListener('DOMContentLoaded', (event) => {
         document.getElementById("myForm").addEventListener("submit", function (e) {
             e.preventDefault();
+            console.log("i was called")
             // const fileInput = document.querySelector('.file-input');
             const fileInput = document.getElementById('file');
             const selectedFile = fileInput.files[0];
