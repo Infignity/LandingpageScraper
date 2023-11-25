@@ -15,4 +15,3 @@ def crawler_task(
     loop.run_until_complete(run(task_id_str, urls))
     
     return f"Task with id={task_id_str} has been completed !"
-    

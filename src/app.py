@@ -6,7 +6,7 @@ from fastapi.exceptions import RequestValidationError
 
 from src.database import init_db
 from src.router import router as ScrapeRouter
-from src.models import Task
+from src.models import Task, TaskResult
 
 app = FastAPI()
 
@@ -21,7 +21,7 @@ app.add_middleware(
 
 app.include_router(ScrapeRouter)
 
-MODELS = [Task]
+MODELS = [Task, TaskResult]
 
 @app.on_event("startup")
 async def start_db():
