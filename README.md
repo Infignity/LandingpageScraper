@@ -6,7 +6,7 @@ This project uses httpx behind then scenes to send asynchronous requests which i
 
 For more reference . There are 2 models
 - Task - For storing all tasks
-- TaskResult - For storing the task results and using sthe task_id as some sort of primary key to connect the Task collection
+- TaskResult - For storing the task results and using the task_id as some sort of primary key to connect the Task collection
 
 ## Limitations
 - Cannot extract landing page text for bot protected websites
