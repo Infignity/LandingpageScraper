@@ -60,6 +60,7 @@ async def scrape_url(session: httpx.AsyncClient, url: str, task_id: PydanticObje
             parser = await send_until_ok(session, url)
             p_tags = parser.css('p')
             texts = [p.text(strip=True) for p in p_tags]
+            print(f'scrapped data: {texts}')
             landing_page_text = (".".join(texts)).replace("..",".")
 
             new_task_result = TaskResult(landing_page_text=landing_page_text, task_id=task_id, url=url)

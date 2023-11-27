@@ -67,6 +67,8 @@ async def add_task(
         str(new_task.id),
         urls,
     )
+
+    print(f"celery with the task id started: {task_result.id}")
     
     new_task.celery_task_id = task_result.id
     await new_task.create()

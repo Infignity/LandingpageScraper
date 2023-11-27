@@ -1,18 +1,46 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  db:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: ${DB_PASS}
-      POSTGRES_USER : ${DB_USER}
-      POSTGRES_DB: ${DB_NAME}
+  web:
+    build: .
     ports:
-      - 5432:5432
+      - 8001:8000
+      - 5556:5555
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
 
-  adminer:
-    image: adminer
-    restart: always
+  redis:
+    image: redis
     ports:
-      - 8057:8080
+      - "6379:6379"
+    
+    
+
+  celery_worker:
+    container_name: celery_worker
+    build: .
+    command: celery -A src.agent.celery_app worker --loglevel=info -E
+    volumes:
+      - .:/app
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 30s
+      retries: 50
+    depends_on:
+      - redis
+      - web
+
+  # celerybackend:
+  #   image: redis:latest
+  #   ports:
+  #     - 6379:6379
+  #   healthcheck:
+  #     test: [ "CMD", "redis-cli", "ping" ]
+  #     interval: 5s
+  #     timeout: 30s
+  #     retries: 50
+  #   restart: always
