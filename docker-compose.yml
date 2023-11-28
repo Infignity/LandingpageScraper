@@ -1,18 +1,29 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: ${DB_PASS}
-      POSTGRES_USER : ${DB_USER}
-      POSTGRES_DB: ${DB_NAME}
-    ports:
-      - 5432:5432
-
-  adminer:
-    image: adminer
+  api:
+    build: .
     restart: always
     ports:
       - 8057:8080
+    depends_on:
+      - celeryworker
+    environment:
+      - REDIS_URI=redis://redis
+    env_file:
+      - .env
+  
+  celeryworker:
+    build: .
+    restart: always
+    depends_on:
+      - redis
+    command: ["celery", "-A","src.agent.celery_app","worker","--loglevel=info","-E"]
+    env_file:
+      - .env
+    environment:
+      - REDIS_URI=redis://redis
+
+  redis:
+    image: redis:latest
+    restart: always

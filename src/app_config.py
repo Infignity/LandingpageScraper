@@ -26,6 +26,7 @@ def create_path(path_str: str, allow_absolute=False) -> str:
 ENVIRONMENT: Literal["development", "production", "staging"] = config("ENVIRONMENT")
 MONGODB_CONN_STRING = config("MONGODB_CONN_STRING")
 DB_NAME = config("MONGODB_DB_NAME")
+REDIS_URI = config("REDIS_URI", default="redis://localhost:6379", cast=str)
 
 def to_camel_case(snake_str: str):
     """

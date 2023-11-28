@@ -1,5 +1,7 @@
-broker_url = 'redis://localhost:6379/0'
-result_backend = 'redis://localhost:6379/1'
+from src.app_config import REDIS_URI
+
+broker_url = f'{REDIS_URI}/0'
+result_backend = f'{REDIS_URI}/1'
 imports = ("tasks",)
 task_routes = {
     'run_crawler': {

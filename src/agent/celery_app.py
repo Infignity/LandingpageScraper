@@ -1,5 +1,5 @@
 from celery import Celery
-from . import celeryconfig
+from src.agent import celeryconfig
 
 app = Celery('celery_tasks')
 app.config_from_object(celeryconfig)
